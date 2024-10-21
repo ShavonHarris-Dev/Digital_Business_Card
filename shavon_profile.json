@@ -1,0 +1,204 @@
+{
+    "personal_info": {
+      "name": "Shavon Harris",
+      "email": "shavonharrisdev@gmail.com",
+      "website": "https://shavonharris-dev.netlify.app/",
+      "linkedin": "https://linkedin.com/in/shavonharris-dev/",
+      "github": "https://github.com/ShavonHarris-Dev",
+      "location": "Chicago, Illinois, United States (Remote)"
+    },
+    "professional_summary": "Former UI Engineer at Trellix with expertise in developing modern, inclusive design systems using React and TypeScript. Proficient in improving accessibility, state management (Redux), and API integration (REST). Currently expanding expertise in Python and cloud technologies like Azure, with a passion for building APIs and accessible tech.",
+    "skills": {
+      "frontend": [
+        "React.js",
+        "JavaScript",
+        "TypeScript",
+        "HTML",
+        "CSS"
+      ],
+      "backend": [
+        "Node.js",
+        "Express",
+        "REST APIs",
+        "Python",
+        "Azure",
+        "MySQL"
+      ],
+      "devops_and_tools": [
+        "GitHub Actions",
+        "Docker",
+        "Git",
+        "npm & Yarn",
+        "AWS",
+        "CI/CD"
+      ],
+      "testing": [
+        "React Testing Library",
+        "TDD",
+        "JSDoc"
+      ],
+      "other": [
+        "WCAG Accessibility Compliance",
+        "Design Systems",
+        "Scalable Code",
+        "Github Copilot",
+        "Modular Code"
+      ]
+    },
+    "work_experience": [
+      {
+        "company": "Trellix",
+        "role": "Software Engineer - User Interface",
+        "duration": "Jun 2022 - Present (2 yrs 5 mos)",
+        "location": "Chicago/Remote",
+        "team": "Design Systems Team",
+        "responsibilities": [
+          "Enhanced component accessibility by 60% through collaboration with the design team.",
+          "Automated GitHub workflows.",
+          "Migrated 50+ components to Shadow DOM, improving rendering efficiency by 30%.",
+          "Contributed to company-wide brand refresh after restructuring."
+        ]
+      },
+      {
+        "team": "Rules Team",
+        "responsibilities": [
+          "Implemented Redux for scalable state management, improving scalability by 40%.",
+          "Developed UI for rule editing, bulk rule deletion, and state management.",
+          "Integrated APIs for rule deletion, improving backend efficiency.",
+          "Managed UI validation and localization."
+        ]
+      },
+      {
+        "company": "100Devs",
+        "role": "Developer Apprentice",
+        "duration": "Aug 2021 - Jun 2022 (11 mos)",
+        "location": "Remote",
+        "responsibilities": [
+          "Designed and developed CRUD and MERN applications using JavaScript, React, MongoDB, and Node.js.",
+          "Improved web app performance by 15% through Chai/Mocha testing.",
+          "Implemented Git and GitHub for version control in a distributed team.",
+          "Built RESTful APIs for efficient data management and CRUD operations."
+        ]
+      },
+      {
+        "company": "MAPSCorps 501(c)(3)",
+        "role": "Senior Field Coordinator",
+        "duration": "Apr 2021 - Aug 2021 (5 mos)",
+        "location": "Chicago",
+        "responsibilities": [
+          "Created curriculum for remote STEM research, impacting 15,000+ locations.",
+          "Mentored 5 symposium groups on data collection for public health initiatives.",
+          "Taught young people how to use GIS and Tableau for community and public health analysis."
+        ]
+      },
+      {
+        "company": "Independent Families",
+        "role": "Pod School Teacher, Multi-Grade Instructor",
+        "duration": "Jun 2020 - Jun 2021 (1 yr)",
+        "location": "Chicago",
+        "responsibilities": [
+          "Led and managed an alternative school during the pandemic, designing personalized learning plans.",
+          "Fostered leadership and responsibility through service projects.",
+          "Implemented multi-level curriculum for remote learning, showcasing adaptability."
+        ]
+      },
+      {
+        "company": "Latin School of Chicago",
+        "role": "4th Grade Teacher",
+        "duration": "Aug 2017 - Aug 2020 (3 yrs)",
+        "location": "Chicago",
+        "responsibilities": [
+          "Collaborated with educators to develop innovative curricula.",
+          "Used data-driven assessments to personalize student learning plans.",
+          "Developed strong communication and presentation skills through teaching."
+        ]
+      }
+    ],
+    
+        "projects": [
+          {
+            "name": "Magical Mirror App",
+            "description": "An app that allows users to send kind messages that appear magically when viewed by a friend.",
+            "technologies": ["React", "Vite", "PostgreSQL", "JWT Authentication"]
+          },
+          {
+            "name": "KDrama Movie Recommender",
+            "description": "A KDrama recommendation app based on user mood, built with React and OpenAI integration.",
+            "technologies": ["React", "OpenAI API", "Vite", "Azure"]
+          },
+          {
+            "name": "Storybook",
+            "description": "This site was made using Handlebars, Materialize, Node.js, and Mongoose. It features Google authorization and uses Passport.js to handle authentication.",
+            "technologies": ["HTML5", "CSS", "JavaScript", "Handlebars", "Node.js", "Mongoose", "Passport.js"],
+            "learning": "Focused on using the MVC architectural paradigm to create a clean and functioning full-stack application with Google authentication."
+          },
+          {
+            "name": "Flashbacks: An App to Record Memories",
+            "description": "This site was made using React, Redux, and Mongoose.",
+            "technologies": ["React", "Redux", "Mongoose"],
+            "learning": "Focused on enhancing my skills with React and Redux for state management."
+          },
+          {
+            "name": "Shavon Harris Dev Website",
+            "description": "This site was made using React, HTML, and CSS. It’s an improvement on my previous portfolio that was made with vanilla JavaScript.",
+            "technologies": ["HTML5", "CSS", "JavaScript", "React"]
+          },
+          {
+            "name": "BollyBot: Random Bollywood Movie Generator",
+            "description": "A simple random movie generator born from my love of Bollywood movies. There are 50 Bollywood movies coming out every moment, and it takes forever to choose the right one to watch. Enter BollyBot!",
+            "technologies": ["React", "CSS", "JavaScript"],
+            "optimizations": "I would redo the UI with React, make this a backend app, and store the data in MongoDB. Currently, the data is hardcoded.",
+            "lessons_learned": "This project would be more efficient with a database integration."
+          },
+          {
+            "name": "Leads Tracker",
+            "description": "An app to track leads while applying to jobs, recruiters, and connections on LinkedIn. Built using CSS, JavaScript, and HTML with Firebase integration. Made into a Progressive Web App (PWA) so that it can be used on mobile devices.",
+            "technologies": ["CSS", "JavaScript", "HTML", "Firebase"],
+            "optimizations": "I would work on improving the mobile interface and adding additional tracking features."
+          },
+          {
+            "name": "Personal Recipe Book",
+            "description": "An app to store recipes I gather during my travels. Built to keep track of recipes over time.",
+            "website": "https://recipesfromaroundtheworld.netlify.app/",
+            "technologies": ["React", "CSS", "JavaScript"],
+            "optimizations": "I would add serving size and chef notes, and refactor ingredients and instructions into reusable components.",
+            "lessons_learned": "Acknowledgment to Brad Traversy for his courses and inspiration."
+          }
+        ],
+    "community_engagement": {
+      "mentorship": [
+        {
+          "role": "Career Mentor",
+          "impact": "Mentored 10+ career changers transitioning into tech.",
+          "responsibilities": [
+            "Guided mentees on time management and conducted code reviews.",
+            "Increased mentees’ LinkedIn networks to 500+ connections.",
+            "Curated and shared free learning resources like Scrimba and FreeCodeCamp."
+          ]
+        },
+        {
+          "role": "Community Engagement Mentor",
+          "impact": "Provided guidance on leveraging online tech communities and industry events for career advancement."
+        }
+      ]
+    },
+    "education": [
+      {
+        "school": "100Devs",
+        "degree": "Full Stack Software Development",
+        "duration": "Aug 2021 - Jun 2021"
+      },
+      {
+        "school": "Northern Michigan University",
+        "degree": "Bachelor's in International Relations",
+        "duration": "Sept 2010 - Jun 2014"
+      }
+    ],
+    "ongoing_learning": [
+      "Advancing Python skills through side projects.",
+      "Enhancing API architecture knowledge by engaging in open-source projects.",
+      "Exploring AI integration techniques through coursework and personal projects."
+    ]
+  }
+  
+  
