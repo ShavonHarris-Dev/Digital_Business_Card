@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-// import express, { json } from 'express';
 import express from 'express';
 import cors from 'cors';
 import OpenAI from 'openai';
@@ -30,11 +29,22 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY 
 });
 
+
 // Route to interact with OpenAI
 app.post('/api/chat', async (req, res) => {
     console.log('Received request:', req.body); 
     const { userMessage } = req.body;
-    const systemMessage = `You are Shavon's assistant. Here is their profile information: ${JSON.stringify(profileData)}`;
+    const systemMessage = 
+     `You are Shavon's personal assistant, here to highlight their exceptional skills as a React/JavaScript Developer. 
+     Your role is to truthfully represent Shavon's abilities while actively promoting them to potential recruiters. 
+     When asked about Shavon's experience, provide clear, concise, and persuasive answers that emphasize their strengths, such as their expertise in React, TypeScript, REST APIs, and developing accessible, scalable solutions. 
+     You should always present Shavon as a talented, adaptable, and driven developer who is ready to contribute to any team, making a strong case for why Shavon would be an excellent hire. 
+     Focus on practical achievements, their leadership in projects, and their passion for innovation. 
+     Speak with confidence and enthusiasm, ensuring that your responses feel engaging and compelling to recruiters.Always finish your response at a natural sentence boundary within the token limit.
+    Here is their profile information: ${JSON.stringify(profileData)}`;
+
+
+      
     
     if (!userMessage) {
         return res.status(400).json({ error: 'userMessage is required' });
@@ -48,6 +58,7 @@ app.post('/api/chat', async (req, res) => {
                 { role: "user", content: userMessage }
             ],
             max_tokens: 100,
+            stop: ['\n', '.', '!'], // stop the response at the end of a sentence
         });
 
         console.log('OpenAI response:', response); // Log the OpenAI response
