@@ -64,15 +64,15 @@ export default function ChatBox() {
                     type="text"
                     value={userMessage}
                     onChange={(e) => setUserMessage(e.target.value)}
-                    placeholder="Ask a question..."
+                    placeholder="Ask me about my experience as a developer!"
                     required
                 />
                 <button type="submit">Send</button>
             </form>
-            <div>
-            <label htmlFor="language-select">Choose a language:</label>
+            <div className="select-container">
+            <label className="select-label" htmlFor="language">Choose a language:</label>
                 <select
-                    id="language-select"
+                    id="language"
                     value={selectedLanguage}
                     onChange={(e) => setSelectedLanguage(e.target.value)}
                 >

@@ -9,10 +9,14 @@ export default function Info() {
             />
             <h1 className="name">Shavon Harris</h1>
             <h2 className="info--title">React / Javascript Developer</h2>
-            <a className="info--website" href='https://shavonharris-dev.netlify.app/'>shavonharris-dev.com</a>
+            <a className="info--website" href='https://shavonharris-dev.netlify.app/' target="_blank" rel="noopener noreferrer">shavonharris-dev.com</a>
             <div className="buttonsContainer">
-            <button className="button--email">Email</button>
+            <a href="mailto:shavonharris9114@gmail.com">
+            <button className="button--email" href="shavonharris9114@gmail.com">Email</button>
+             </a>
+            <a href="https://www.linkedin.com/in/shavonharris-dev/" target="_blank" rel="noopener noreferrer">
             <button className="button--link">LinkedIn</button>
+            </a>
             </div>
         </section>
     )
