@@ -5,24 +5,16 @@ export default function ChatBox() {
     const [chatHistory, setChatHistory] = useState([]);
     const [selectedLanguage, setSelectedLanguage] = useState('en-US');
 
-    const playAudio = (text, lang = 'en-US') => {
-        const speech = new SpeechSynthesisUtterance(text);
-        speech.lang = lang;
-        window.speechSynthesis.speak(speech);
-    }
-
-    // remove all non-alphanumeric characters from the string
+    // Remove all non-alphanumeric characters from the string
     const cleanInput = (input) => {
         return input.replace(/[^\w\s]/gi, '');  
-      };
-
+    };
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
 
         // Clean the user's message
         const cleanedMessage = cleanInput(userMessage);
-       
 
         // First, update the chat history with the user's message
         setChatHistory((prevHistory) => [
@@ -31,24 +23,29 @@ export default function ChatBox() {
         ]);
 
         try {
-            // Send user message to the backend
+            // Send user message and selected language to the backend
             const response = await fetch('http://localhost:5002/api/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ userMessage:cleanedMessage }),
+                body: JSON.stringify({ userMessage: cleanedMessage, language: selectedLanguage }),
             });
 
             const data = await response.json();
 
-            // Then, update the chat history with the AI's response
+            // Update the chat history with the AI's response
             setChatHistory((prevHistory) => [
                 ...prevHistory, 
                 { sender: 'ai', message: data.aiResponse }
             ]);
 
-            playAudio(data.aiResponse);
+            // If there's an audio response (S3 URL), play it
+            if (data.s3Url) {
+                const audio = new Audio(data.s3Url);
+                audio.play();
+            }
+
         } catch (error) {
             console.error('Error fetching AI response:', error);
         }
@@ -56,7 +53,6 @@ export default function ChatBox() {
         // Clear the input field
         setUserMessage('');
     };
-
 
     return (
         <div className="chat-box">
@@ -78,21 +74,21 @@ export default function ChatBox() {
                 <button type="submit">Send</button>
             </form>
             <div className="select-container">
-            <label className="select-label" htmlFor="language">Choose a language:</label>
+                <label className="select-label" htmlFor="language">Choose a language:</label>
                 <select
                     id="language"
                     value={selectedLanguage}
                     onChange={(e) => setSelectedLanguage(e.target.value)}
                 >
                     <option value="en-US">English (US)</option>
-                    <option value="es-ES">Korean (Korea)</option>
-                    <option value="fr-FR">Arabic (Egypt)</option>
+                    <option value="ko-KR">Korean (Korea)</option>
+                    <option value="ar-EG">Arabic (Egypt)</option>
                     <option value="fr-FR">French (French)</option>
                     <option value="es-ES">Spanish (Spain)</option>
-                    <option value="es-ES">Hindi (India)</option>
+                    <option value="hi-IN">Hindi (India)</option>
                 </select>
-
             </div>
         </div>
     );
 }
+
