@@ -11,15 +11,23 @@ export default function ChatBox() {
         window.speechSynthesis.speak(speech);
     }
 
+    // remove all non-alphanumeric characters from the string
+    const cleanInput = (input) => {
+        return input.replace(/[^\w\s]/gi, '');  
+      };
+
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
+
+        // Clean the user's message
+        const cleanedMessage = cleanInput(userMessage);
        
 
         // First, update the chat history with the user's message
         setChatHistory((prevHistory) => [
             ...prevHistory, 
-            { sender: 'user', message: userMessage }
+            { sender: 'user', message: cleanedMessage }
         ]);
 
         try {
@@ -29,7 +37,7 @@ export default function ChatBox() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ userMessage }),
+                body: JSON.stringify({ userMessage:cleanedMessage }),
             });
 
             const data = await response.json();
