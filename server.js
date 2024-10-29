@@ -46,16 +46,53 @@ const generatePreSignedUrl = async (bucketName, key, expiresIn = 3600) => {
     }
 };
 
-// Function to synthesize speech using Polly
+// Function to translate text using OpenAI
+const translateText = async (text, targetLanguage) => {
+    const translationPrompt = `Translate the following text to ${targetLanguage}: ${text}`;
+    const translationResponse = await openai.chat.completions.create({
+        model: "gpt-4-turbo",
+        messages: [
+            { role: "system", content: "You are a helpful assistant who translates text." },
+            { role: "user", content: translationPrompt }
+        ],
+        max_tokens: 200
+    });
+
+    const translatedText = translationResponse.choices[0].message.content.trim();
+    return translatedText;
+};
+
+// Function to synthesize speech using Polly and transform to byte array
 const getSpeech = async (text, languageCode = 'en-US') => {
+
     if (!text || text.trim().length === 0) {
         throw new Error('Text is empty or too short');
     }
 
+    // Map of language codes to Polly voices
+    const languageMap = {
+        'en-US': { voiceId: 'Joanna', translateTo: 'English' },
+        'fr-FR': { voiceId: 'Celine', translateTo: 'French' },  // French
+        'es-ES': { voiceId: 'Lucia', translateTo: 'Spanish' },  // Spanish
+        'hi-IN': { voiceId: 'Aditi', translateTo: 'Hindi' },    // Hindi
+        'ar-SA': { voiceId: 'Zeina', translateTo: 'Arabic' },   // Arabic
+        'ko-KR': { voiceId: 'Seoyeon', translateTo: 'Korean' }  // Korean
+    };
+
+    let translatedText = text;
+    let voiceId = 'Joanna'; // Default English voice
+
+    // Handle translation and voice selection based on language
+    if (languageCode in languageMap) {
+        const languageConfig = languageMap[languageCode];
+        translatedText = await translateText(text, languageConfig.translateTo);
+        voiceId = languageConfig.voiceId;
+    }
+
     const params = {
-        Text: text,
+        Text: translatedText,
         OutputFormat: 'mp3',
-        VoiceId: 'Joanna', 
+        VoiceId: voiceId,
         LanguageCode: languageCode,
         Engine: 'standard',
     };
@@ -166,6 +203,12 @@ getSpeech(testText, testLanguageCode).then(url => {
 }).catch(error => {
     console.error("Error during speech generation:", error);
 });
+
+
+
+
+
+
 
 
 
