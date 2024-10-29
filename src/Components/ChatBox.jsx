@@ -5,6 +5,15 @@ export default function ChatBox() {
     const [chatHistory, setChatHistory] = useState([]);
     const [selectedLanguage, setSelectedLanguage] = useState('en-US');
 
+    const playAudio = (url) => {
+        console.log('Attempting to play audio from URL:', url);
+        const audio = new Audio(url);
+        audio.play()
+            .then(() => console.log('Audio is playing successfully'))
+            .catch(error => {
+                console.error('Error playing audio:', error);
+            });
+    }
     // Remove all non-alphanumeric characters from the string
     const cleanInput = (input) => {
         return input.replace(/[^\w\s]/gi, '');  
@@ -15,6 +24,8 @@ export default function ChatBox() {
 
         // Clean the user's message
         const cleanedMessage = cleanInput(userMessage);
+        console.log('Sending request to backend with message:', cleanedMessage);
+
 
         // First, update the chat history with the user's message
         setChatHistory((prevHistory) => [
@@ -30,9 +41,16 @@ export default function ChatBox() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ userMessage: cleanedMessage, language: selectedLanguage }),
+                language: selectedLanguage,
             });
 
+            if(!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
             const data = await response.json();
+            console.log('Response received from backend:', data);
+
 
             // Update the chat history with the AI's response
             setChatHistory((prevHistory) => [
@@ -40,15 +58,21 @@ export default function ChatBox() {
                 { sender: 'ai', message: data.aiResponse }
             ]);
 
-            // If there's an audio response (S3 URL), play it
-            if (data.s3Url) {
-                const audio = new Audio(data.s3Url);
-                audio.play();
-            }
+            console.log("check", data.s3Url)
 
-        } catch (error) {
-            console.error('Error fetching AI response:', error);
+         // If there's an audio response (Pre-signed S3 URL), play it
+         if (data.s3Url) {
+            playAudio(data.s3Url);
+        } else {
+            console.log('No valid S3 URL for audio playback');
         }
+    } catch (error) {
+        console.error('Error fetching AI response:', error);
+        if (error.response) {
+            console.error('Error details:', error.response.data);
+        }
+        
+    }
 
         // Clear the input field
         setUserMessage('');
@@ -83,7 +107,7 @@ export default function ChatBox() {
                     <option value="en-US">English (US)</option>
                     <option value="ko-KR">Korean (Korea)</option>
                     <option value="ar-EG">Arabic (Egypt)</option>
-                    <option value="fr-FR">French (French)</option>
+                    <option value="fr-FR">French (France)</option>
                     <option value="es-ES">Spanish (Spain)</option>
                     <option value="hi-IN">Hindi (India)</option>
                 </select>
@@ -91,4 +115,5 @@ export default function ChatBox() {
         </div>
     );
 }
+
 
