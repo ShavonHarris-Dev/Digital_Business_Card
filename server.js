@@ -131,6 +131,11 @@ const getSpeech = async (text, languageCode = 'en-US') => {
     }
 };
 
+//route to test the API
+app.get('/api/test', (req, res) => {
+    res.json({ message: 'API is working!' });
+});
+
 // Route to interact with OpenAI and Polly
 app.post('/api/chat', async (req, res) => {
     console.log('Received request:', req.body); 
