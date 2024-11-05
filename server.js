@@ -12,8 +12,14 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 // Load environment variables from .env file
 dotenv.config();
 
+
 const app = express();
 app.use(express.json());
+
+//route to test the API
+app.get('/api/test', (req, res) => {
+    res.json({ message: 'API is working!' });
+});
 
 // Middleware
 app.use(cors({
@@ -131,10 +137,6 @@ const getSpeech = async (text, languageCode = 'en-US') => {
     }
 };
 
-//route to test the API
-app.get('/api/test', (req, res) => {
-    res.json({ message: 'API is working!' });
-});
 
 // Route to interact with OpenAI and Polly
 app.post('/api/chat', async (req, res) => {
