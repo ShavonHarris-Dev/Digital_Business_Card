@@ -36,13 +36,13 @@ export default function ChatBox() {
         try {
             // Send user message and selected language to the backend
             // const response = await fetch('https://34.233.90.234:5002/api/chat', {
-                const response = await fetch('/.netlify/functions/chat', {
+                const response = await fetch('/functions/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ userMessage: cleanedMessage, language: selectedLanguage }),
-                language: selectedLanguage,
+                // language: selectedLanguage,
             });
 
             if(!response.ok) {
