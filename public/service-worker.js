@@ -11,16 +11,20 @@ const assetsToCache = [
   // Add more assets you want to cache for offline use
 ];
 
-self.addEventListener('install', event => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(cacheName).then(cache => {
-      return cache.addAll(assetsToCache).catch(error => {
+    caches.open(cacheName).then((cache) => {
+      return cache.addAll(assetsToCache).catch((error) => {
         console.error('Failed to cache resources:', error);
+        assetsToCache.forEach((url) => {
+          fetch(url).catch((fetchError) => {
+            console.error(`Failed to fetch ${url}:`, fetchError);
+          });
+        });
       });
     })
   );
 });
-
 
 self.addEventListener('fetch', (event) => {
   event.respondWith(
