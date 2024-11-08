@@ -16,6 +16,10 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
+app.get('/', (req, res) => { 
+    res.send('Welcome to Shavon\'s Personal Assistant API!');
+    });
+
 //route to test the API
 app.get('/api/test', (req, res) => {
     res.json({ message: 'API is working!' });
