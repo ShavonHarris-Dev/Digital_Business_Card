@@ -35,7 +35,7 @@ export default function ChatBox() {
 
         try {
             // Send user message and selected language to the backend
-            const response = await fetch('http://localhost:5002/api/chat', {
+            const response = await fetch('http://34.227.112.160:5002/api/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

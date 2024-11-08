@@ -27,7 +27,9 @@ app.get('/api/test', (req, res) => {
 
 // Middleware
 app.use(cors({
-    origin: 'http://localhost:5173', // Allow the React app to connect
+    origin: 'https://getdowntobusinesscard.netlify.app/', // Allow the React app to connect
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
 }));
 
 // Load profile data
@@ -85,6 +87,7 @@ const getSpeech = async (text, languageCode = 'en-US') => {
         'fr-FR': { voiceId: 'Celine', translateTo: 'French' },  // French
         'es-ES': { voiceId: 'Lucia', translateTo: 'Spanish' },  // Spanish
         'hi-IN': { voiceId: 'Aditi', translateTo: 'Hindi' },    // Hindi
+        // something wrong with the Arabic voice
         'ar-SA': { voiceId: 'Zeina', translateTo: 'Arabic' },   // Arabic
         'ko-KR': { voiceId: 'Seoyeon', translateTo: 'Korean' }  // Korean
     };
@@ -203,7 +206,7 @@ app.use((req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 5002;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
 
 // Example of where to test getSpeech
 const testText = "Hello, this is a longer test of AWS Polly in English. Let's see how it performs with a longer input.";
