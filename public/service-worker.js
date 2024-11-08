@@ -6,16 +6,21 @@ const assetsToCache = [
   "/icon-192.jpeg",
   "/icon-512.jpeg",
   '/Components.css',
+  "/offline.html", 
+  "/service-worker.js",
   // Add more assets you want to cache for offline use
 ];
 
-self.addEventListener("install", (event) => {
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(cacheName).then((cache) => {
-      return cache.addAll(assetsToCache);
+    caches.open(cacheName).then(cache => {
+      return cache.addAll(assetsToCache).catch(error => {
+        console.error('Failed to cache resources:', error);
+      });
     })
   );
 });
+
 
 self.addEventListener('fetch', (event) => {
   event.respondWith(
