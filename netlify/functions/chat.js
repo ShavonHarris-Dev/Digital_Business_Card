@@ -8,24 +8,70 @@ import cors from 'cors';
 import OpenAI from 'openai';
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
-// Initialize Express app
+
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Configure AWS Clients
-const s3Client = new S3Client({ region: process.env.AWS_REGION });
-const pollyClient = new PollyClient({ region: process.env.AWS_REGION });
-
-// Configure OpenAI
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+// AWS Clients Configuration
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.MY_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.MY_AWS_SECRET_ACCESS_KEY,
+  },
 });
 
+const pollyClient = new PollyClient({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.MY_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.MY_AWS_SECRET_ACCESS_KEY,
+  },
+});
+
+app.get('/api/test-aws', async (req, res) => {
+  console.log('Test AWS endpoint hit!');
+  console.log('Environment variables:', {
+    MY_AWS_ACCESS_KEY_ID: process.env.MY_AWS_ACCESS_KEY_ID,
+    MY_AWS_REGION: process.env.MY_AWS_REGION,
+    MY_AWS_S3_BUCKET: process.env.MY_AWS_S3_BUCKET,
+  });
+
+  try {
+    const bucketName = process.env.MY_AWS_S3_BUCKET;
+    const params = {
+      Bucket: bucketName,
+      Key: 'test.txt',
+      Body: 'Hello, AWS S3!',
+    };
+
+    await s3Client.send(new PutObjectCommand(params));
+    res.status(200).send('AWS credentials are working!');
+  } catch (error) {
+    console.error('AWS test failed:', error);
+    res.status(500).send('AWS test failed');
+  }
+});
+
+
+
+// OpenAI Configuration
+const openai = new OpenAI({ apiKey: process.env.MY_OPENAI_API_KEY });
+
 // Helper: Generate Pre-Signed URL
+// const generatePreSignedUrl = async (bucketName, key, expiresIn = 3600) => {
+//   const command = new GetObjectCommand({ Bucket: bucketName, Key: key });
+//   try {
+//     return await getSignedUrl(s3Client, command, { expiresIn });
+//   } catch (error) {
+//     console.error('Error generating pre-signed URL:', error);
+//     throw error;
+//   }
+// };
+
 const generatePreSignedUrl = async (bucketName, key, expiresIn = 3600) => {
   const command = new GetObjectCommand({ Bucket: bucketName, Key: key });
   try {
@@ -59,13 +105,10 @@ const getSpeech = async (text, languageCode = 'en-US') => {
 
   try {
     const pollyResponse = await pollyClient.send(new SynthesizeSpeechCommand(params));
-
-    if (!pollyResponse.AudioStream) {
-      throw new Error('AudioStream is empty');
-    }
+    if (!pollyResponse.AudioStream) throw new Error('AudioStream is empty');
 
     const audioBuffer = Buffer.from(await pollyResponse.AudioStream.transformToByteArray());
-    const bucketName = process.env.AWS_S3_BUCKET;
+    const bucketName = process.env.MY_AWS_S3_BUCKET;
     const key = `audio/${Date.now()}.mp3`;
 
     await s3Client.send(
@@ -77,15 +120,14 @@ const getSpeech = async (text, languageCode = 'en-US') => {
       })
     );
 
-    const s3Url = await generatePreSignedUrl(bucketName, key);
-    return s3Url;
+    return await generatePreSignedUrl(bucketName, key);
   } catch (error) {
     console.error('Error generating speech:', error);
     throw error;
   }
 };
 
-// API Route: Chat
+// Express Route: Chat
 app.post('/api/chat', async (req, res) => {
   const { userMessage, language } = req.body;
 
@@ -94,7 +136,7 @@ app.post('/api/chat', async (req, res) => {
   }
 
   try {
-    // Get OpenAI response
+    // Get AI Response
     const aiResponse = await openai.chat.completions.create({
       model: 'gpt-4-turbo',
       messages: [{ role: 'user', content: userMessage }],
@@ -103,10 +145,9 @@ app.post('/api/chat', async (req, res) => {
 
     const aiMessage = aiResponse.choices[0]?.message?.content?.trim() || 'No response received';
 
-    // Generate Speech
+    // Generate Audio
     const s3Url = await getSpeech(aiMessage, language);
 
-    res.setHeader('Content-Type', 'application/json');
     res.json({
       message: 'Audio generated successfully!',
       aiResponse: aiMessage,
@@ -116,7 +157,12 @@ app.post('/api/chat', async (req, res) => {
     console.error('Error in /api/chat:', error);
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
+  
 });
 
-// Export as Serverless Function
+
+
+
+// Export the Serverless Handler
 export const handler = serverless(app);
+

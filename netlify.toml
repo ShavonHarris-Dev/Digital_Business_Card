@@ -9,14 +9,17 @@
     "@aws-sdk/client-s3",
     "@aws-sdk/client-polly",
     "@aws-sdk/s3-request-presigner",
+    "express",
+    "cors",
+    "dotenv",
     "openai"
   ]
 
 [[redirects]]
-  from = "/functions/*"
+  from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
-
+  force = true
 
 [[redirects]]
   from = "/*"
