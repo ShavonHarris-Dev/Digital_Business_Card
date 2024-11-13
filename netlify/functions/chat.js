@@ -161,6 +161,7 @@ app.post('/api/chat', async (req, res) => {
         // { role: "user", content: text },
         { role: "user", content: userMessage },
       ],
+      max_tokens: 150,
     });
 
     const aiMessage = aiResponse.choices[0].message.content;
