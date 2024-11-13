@@ -3,17 +3,17 @@ import { useState } from "react";
 export default function ChatBox() {
     const [userMessage, setUserMessage] = useState('');
     const [chatHistory, setChatHistory] = useState([]);
-    const [selectedLanguage, setSelectedLanguage] = useState('en-US');
+    // const [selectedLanguage, setSelectedLanguage] = useState('en-US');
 
-    const playAudio = (url) => {
-        console.log('Attempting to play audio from URL:', url);
-        const audio = new Audio(url);
-        audio.play()
-            .then(() => console.log('Audio is playing successfully'))
-            .catch(error => {
-                console.error('Error playing audio:', error);
-            });
-    }
+    // const playAudio = (url) => {
+    //     console.log('Attempting to play audio from URL:', url);
+    //     const audio = new Audio(url);
+    //     audio.play()
+    //         .then(() => console.log('Audio is playing successfully'))
+    //         .catch(error => {
+    //             console.error('Error playing audio:', error);
+    //         });
+    // }
     // Remove all non-alphanumeric characters from the string
     const cleanInput = (input) => {
         return input.replace(/[^\w\s]/gi, '');  
@@ -41,7 +41,8 @@ export default function ChatBox() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ userMessage: cleanedMessage, language: selectedLanguage }),
+                // body: JSON.stringify({ userMessage: cleanedMessage, language: selectedLanguage }),
+                body: JSON.stringify({ userMessage: cleanedMessage }),
                 // language: selectedLanguage,
             });
 
@@ -50,7 +51,7 @@ export default function ChatBox() {
             }
 
             const data = await response.json();
-            console.log('Response received from backend:', data);
+            // console.log('Response received from backend:', data);
 
 
             // Update the chat history with the AI's response
@@ -59,14 +60,14 @@ export default function ChatBox() {
                 { sender: 'ai', message: data.aiResponse }
             ]);
 
-            console.log("check", data.s3Url)
+            // console.log("check", data.s3Url)
 
          // If there's an audio response (Pre-signed S3 URL), play it
-         if (data.s3Url) {
-            playAudio(data.s3Url);
-        } else {
-            console.log('No valid S3 URL for audio playback');
-        }
+        //  if (data.s3Url) {
+        //     playAudio(data.s3Url);
+        // } else {
+        //     console.log('No valid S3 URL for audio playback');
+        // }
     } catch (error) {
         console.error('Error fetching AI response:', error);
         if (error.response) {
@@ -85,6 +86,7 @@ export default function ChatBox() {
                 {chatHistory.map((chat, index) => (
                     <div key={index} className={chat.sender === 'user' ? 'user-message' : 'ai-message'}>
                         {chat.message}
+                        {/* <audio src={chat.audioUrl} controls /> */}
                     </div>
                 ))}
             </div>
@@ -98,12 +100,12 @@ export default function ChatBox() {
                 />
                 <button type="submit">Send</button>
             </form>
-            <div className="select-container">
+            {/* <div className="select-container">
                 <label className="select-label" htmlFor="language">Choose a language:</label>
                 <select
                     id="language"
-                    value={selectedLanguage}
-                    onChange={(e) => setSelectedLanguage(e.target.value)}
+                    // value={selectedLanguage}
+                    // onChange={(e) => setSelectedLanguage(e.target.value)}
                 >
                     <option value="en-US">English (US)</option>
                     <option value="ko-KR">Korean (Korea)</option>
@@ -112,7 +114,7 @@ export default function ChatBox() {
                     <option value="es-ES">Spanish (Spain)</option>
                     <option value="hi-IN">Hindi (India)</option>
                 </select>
-            </div>
+            </div> */}
         </div>
     );
 }
