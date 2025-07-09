@@ -1,4 +1,6 @@
 /* eslint-disable no-undef */
+import validator from 'validator';
+import helmet from 'helmet';
 import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables
 
@@ -12,18 +14,56 @@ import OpenAI from 'openai';
 import fs from 'fs';
 import path from 'path';
 
+// Add this validation function
+const validateAndSanitizeInput = (input) => {
+  if (!input || typeof input !== 'string') {
+    throw new Error('Invalid input: Message must be a non-empty string');
+  }
+  
+  if (input.length > 1000) {
+    throw new Error('Message too long. Please keep messages under 1000 characters.');
+  }
+  
+  let sanitized = validator.trim(input);
+  sanitized = validator.escape(sanitized);
+  
+  // Check for suspicious patterns
+  const suspiciousPatterns = [/<script/i, /javascript:/i, /on\w+\s*=/i];
+  
+  for (const pattern of suspiciousPatterns) {
+    if (pattern.test(sanitized)) {
+      throw new Error('Invalid input: Potentially malicious content detected');
+    }
+  }
+  
+  return validator.unescape(sanitized);
+};
 
 const app = express();
-app.use(cors());
-// app.use(
-//   cors({
-//     origin: 'https://getdowntobusinesscard.netlify.app/api/chat', // Replace with your deployed URL
-//     methods: ['GET', 'POST'],
-//     allowedHeaders: ['Content-Type'],
-//   })
-// );
 
-app.use(express.json());
+// Security middleware
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  },
+}));
+
+// CORS configuration
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://getdowntobusinesscard.netlify.app'] // Replace with your actual domain
+    : ['http://localhost:5173', 'http://localhost:8888'],
+  credentials: true,
+  methods: ['POST', 'GET', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+app.use(express.json({ limit: '10mb' }));
 
 // Load Profile Data
 const profileData = JSON.parse(fs.readFileSync(path.resolve('shavon_profile.json'), 'utf-8'));
@@ -137,50 +177,83 @@ const openai = new OpenAI({ apiKey: process.env.MY_OPENAI_API_KEY });
 
 // Chat Endpoint to Generate AI Response, Speech, and Return Pre-Signed URL
 app.post('/api/chat', async (req, res) => {
-  // const { userMessage, language } = req.body;
-  // const languageCode = language; // Ensure this maps correctly to 'languageMap'
-  // const text = userMessage;
-  const { userMessage } = req.body;
-
-  if (!userMessage) {
-    return res.status(400).json({ error: 'userMessage is required' });
-  }
-
-  // Construct System Message using Profile Data
-  const systemMessage = `You are Shavon's personal assistant, here to highlight their exceptional skills as a React/JavaScript Developer.
-      Your role is to truthfully represent Shavon's abilities while actively promoting them to potential recruiters. 
-      Focus on practical achievements, leadership in projects, and passion for innovation.
-      Here is their profile information: ${JSON.stringify(profileData)}`;
-
   try {
+    const { userMessage } = req.body;
+
+    // Validate and sanitize input
+    const sanitizedMessage = validateAndSanitizeInput(userMessage);
+   
+    if (!sanitizedMessage) {
+      return res.status(400).json({ error: 'userMessage is required' });
+    }
+
+    // Construct System Message using Profile Data
+    const systemMessage = `You are Shavon's personal assistant, here to highlight their exceptional skills as a React/JavaScript Developer.
+        Your role is to truthfully represent Shavon's abilities while actively promoting them to potential recruiters. 
+        Focus on practical achievements, leadership in projects, and passion for innovation.
+        Here is their profile information: ${JSON.stringify(profileData)}`;
+
     // Generate AI Response using OpenAI
     const aiResponse = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
         { role: "system", content: systemMessage },
-        // { role: "user", content: text },
-        { role: "user", content: userMessage },
+        { role: "user", content: sanitizedMessage }, // Use sanitized message
       ],
-      max_tokens: 150,
+      max_tokens: 500,
+      temperature: 0.7,
     });
 
     const aiMessage = aiResponse.choices[0].message.content;
+
+    // Sanitize AI response for safe display
+    const sanitizedResponse = validator.escape(aiMessage);
 
     // Generate Speech and Upload to S3, then get Pre-Signed URL
     // const presignedUrl = await getSpeech(aiMessage, languageCode);
 
     // Respond with the AI message and Pre-Signed URL
     // res.status(200).json({ aiResponse: aiMessage, s3Url: presignedUrl });
-    res.status(200).json({ aiResponse: aiMessage });
+    res.status(200).json({ 
+      response: sanitizedResponse, // Changed from aiResponse to response to match frontend
+      timestamp: new Date().toISOString()
+    });
   } catch (error) {
     console.error('Error in /api/chat:', error);
-    res.status(500).send('Error processing chat request');
+    
+    // Handle validation errors specifically
+    if (error.message.includes('Invalid input') || 
+        error.message.includes('Message too long') || 
+        error.message.includes('Message cannot be empty')) {
+      return res.status(400).json({ error: error.message });
+    }
+    
+    // Handle OpenAI API errors
+    if (error.status === 429) {
+      return res.status(429).json({ 
+        error: 'Service is temporarily busy. Please try again in a moment.' 
+      });
+    }
+    
+    // Don't expose internal errors to client
+    res.status(500).json({ 
+      error: 'An error occurred while processing your request. Please try again.' 
+    });
   }
 });
 
 // Default Route  
 app.get('/', (req, res) => {
   res.send('Welcome to the Chat API');
+});
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    version: '1.0.0'
+  });
 });
 
 
