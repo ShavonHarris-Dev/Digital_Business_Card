@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 import validator from 'validator';
 import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables
 
@@ -64,6 +65,67 @@ app.use(cors({
 }));
 
 app.use(express.json({ limit: '10mb' }));
+
+// Rate limiting configuration
+const chatLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute window
+  max: 10, // Limit each IP to 10 requests per windowMs
+  message: {
+    error: 'Too many chat requests from this IP. Please wait a minute before trying again.',
+    retryAfter: 60,
+    limitInfo: {
+      max: 10,
+      windowMs: 60000
+    }
+  },
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  skipSuccessfulRequests: false, // Don't skip successful requests
+  skipFailedRequests: false, // Don't skip failed requests
+  keyGenerator: (req) => {
+    // Use IP address as the key for rate limiting
+    return req.ip || req.connection.remoteAddress || 'unknown';
+  },
+  // Custom handler for when limit is exceeded
+  handler: (req, res) => {
+    console.log(`Rate limit exceeded for IP: ${req.ip} at ${new Date().toISOString()}`);
+    res.status(429).json({
+      error: 'Too many requests. Please wait a minute before trying again.',
+      retryAfter: Math.ceil((req.rateLimit.resetTime - Date.now()) / 1000),
+      limit: req.rateLimit.limit,
+      remaining: req.rateLimit.remaining
+    });
+  }
+});
+
+// Global rate limiter for all endpoints (more permissive)
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per 15 minutes
+  message: {
+    error: 'Too many requests from this IP. Please try again later.',
+    retryAfter: 900
+  },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+// Apply global rate limiting to all routes
+app.use(globalLimiter);
+
+// Request logging middleware for monitoring
+app.use((req, res, next) => {
+  const timestamp = new Date().toISOString();
+  const ip = req.ip || req.connection.remoteAddress || 'unknown';
+  console.log(`[${timestamp}] ${req.method} ${req.path} - IP: ${ip}`);
+  
+  // Log rate limit headers if they exist
+  if (req.rateLimit) {
+    console.log(`Rate limit info - Remaining: ${req.rateLimit.remaining}/${req.rateLimit.limit}, Reset: ${new Date(req.rateLimit.resetTime).toISOString()}`);
+  }
+  
+  next();
+});
 
 // Load Profile Data
 const profileData = JSON.parse(fs.readFileSync(path.resolve('shavon_profile.json'), 'utf-8'));
@@ -176,7 +238,7 @@ const openai = new OpenAI({ apiKey: process.env.MY_OPENAI_API_KEY });
 
 
 // Chat Endpoint to Generate AI Response, Speech, and Return Pre-Signed URL
-app.post('/api/chat', async (req, res) => {
+app.post('/api/chat', chatLimiter, async (req, res) => {
   try {
     const { userMessage } = req.body;
 
