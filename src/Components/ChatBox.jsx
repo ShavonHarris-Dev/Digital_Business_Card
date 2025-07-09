@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function ChatBox() {
     const [userMessage, setUserMessage] = useState('');
@@ -6,6 +6,34 @@ export default function ChatBox() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [rateLimitInfo, setRateLimitInfo] = useState(null);
+    const [csrfToken, setCsrfToken] = useState(null);
+
+    // Fetch CSRF token
+    const fetchCSRFToken = useCallback(async () => {
+        try {
+            const response = await fetch('/api/csrf-token');
+            if (response.ok) {
+                const data = await response.json();
+                setCsrfToken(data.csrfToken);
+                console.log('CSRF token fetched successfully');
+                
+                // Set up token refresh before expiry
+                const refreshTime = data.expiresIn * 1000 - 60000; // Refresh 1 minute before expiry
+                setTimeout(() => {
+                    fetchCSRFToken();
+                }, Math.max(refreshTime, 30000)); // Minimum 30 seconds
+            } else {
+                console.error('Failed to fetch CSRF token');
+            }
+        } catch (error) {
+            console.error('Error fetching CSRF token:', error);
+        }
+    }, []);
+
+    // Fetch CSRF token on component mount
+    useEffect(() => {
+        fetchCSRFToken();
+    }, [fetchCSRFToken]);
 
     // Input validation and sanitization
     const validateInput = (input) => {
@@ -64,6 +92,12 @@ export default function ChatBox() {
             return;
         }
 
+        // Check if CSRF token is available
+        if (!csrfToken) {
+            setError('Security token not available. Please refresh the page and try again.');
+            return;
+        }
+
         const cleanedMessage = cleanInput(userMessage);
         console.log('Sending request to backend with message:', cleanedMessage);
 
@@ -80,6 +114,7 @@ export default function ChatBox() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken,
                 },
                 body: JSON.stringify({ userMessage: cleanedMessage }),
             });
@@ -108,6 +143,29 @@ export default function ChatBox() {
                 ]);
                 
                 return;
+            }
+
+            // Handle CSRF token issues
+            if (response.status === 403) {
+                const errorData = await response.json();
+                
+                if (errorData.code === 'CSRF_TOKEN_INVALID' || errorData.code === 'CSRF_TOKEN_MISSING') {
+                    // Refresh CSRF token and retry
+                    await fetchCSRFToken();
+                    setError('Security token expired. Please try sending your message again.');
+                    
+                    setChatHistory((prevHistory) => [
+                        ...prevHistory, 
+                        { 
+                            sender: 'system', 
+                            message: `🔒 Security token refreshed. Please try sending your message again.`,
+                            timestamp: new Date().toISOString(),
+                            isError: true
+                        }
+                    ]);
+                    
+                    return;
+                }
             }
 
             if (!response.ok) {
@@ -165,12 +223,18 @@ export default function ChatBox() {
             <div className="chat-header">
                 <h3>💬 Chat with Shavon&apos;s AI Assistant</h3>
                 <p>Ask me anything about Shavon&apos;s background and experience!</p>
-                {rateLimitInfo && (
-                    <div className="rate-limit-info">
-                        <span className="rate-limit-icon">⏱️</span>
-                        Rate limit: {rateLimitInfo.remaining}/{rateLimitInfo.limit} requests remaining
+                <div className="chat-status-indicators">
+                    {rateLimitInfo && (
+                        <div className="rate-limit-info">
+                            <span className="rate-limit-icon">⏱️</span>
+                            Rate limit: {rateLimitInfo.remaining}/{rateLimitInfo.limit} requests remaining
+                        </div>
+                    )}
+                    <div className={`security-status ${csrfToken ? 'secure' : 'insecure'}`}>
+                        <span className="security-icon">{csrfToken ? '🔒' : '🔓'}</span>
+                        {csrfToken ? 'Secure Connection' : 'Initializing Security...'}
                     </div>
-                )}
+                </div>
             </div>
 
             <div className="chat-history">

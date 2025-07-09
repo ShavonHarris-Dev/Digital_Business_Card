@@ -245,12 +245,18 @@ a:hover {
   opacity: 0.8;
 }
 
+.chat-status-indicators {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
 .rate-limit-info {
   background-color: #fff3cd;
   border: 1px solid #ffeaa7;
   border-radius: 6px;
   padding: 8px 12px;
-  margin-top: 12px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -259,6 +265,33 @@ a:hover {
 }
 
 .rate-limit-icon {
+  font-size: 1.1em;
+}
+
+.security-status {
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85em;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.security-status.secure {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+}
+
+.security-status.insecure {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+.security-icon {
   font-size: 1.1em;
 }
 

@@ -2,6 +2,7 @@
 import validator from 'validator';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import crypto from 'crypto';
 import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables
 
@@ -14,6 +15,47 @@ import OpenAI from 'openai';
 // import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import fs from 'fs';
 import path from 'path';
+
+// CSRF Token Management
+const CSRF_SECRET = process.env.CSRF_SECRET || 'digital-business-card-secret-key-2024';
+const TOKEN_EXPIRY = 15 * 60 * 1000; // 15 minutes
+
+// Validate CSRF token
+const validateCSRFToken = (token) => {
+  if (!token || typeof token !== 'string') {
+    return false;
+  }
+
+  try {
+    const parts = token.split(':');
+    if (parts.length !== 3) {
+      return false;
+    }
+
+    const [timestamp, random, signature] = parts;
+    const payload = `${timestamp}:${random}`;
+    
+    // Check if token has expired
+    const tokenTime = parseInt(timestamp, 10);
+    if (Date.now() - tokenTime > TOKEN_EXPIRY) {
+      return false;
+    }
+
+    // Verify signature
+    const hmac = crypto.createHmac('sha256', CSRF_SECRET);
+    hmac.update(payload);
+    const expectedSignature = hmac.digest('hex');
+    
+    // Use timing-safe comparison
+    return crypto.timingSafeEqual(
+      Buffer.from(signature, 'hex'),
+      Buffer.from(expectedSignature, 'hex')
+    );
+  } catch (error) {
+    console.error('CSRF token validation error:', error);
+    return false;
+  }
+};
 
 // Add this validation function
 const validateAndSanitizeInput = (input) => {
@@ -241,6 +283,26 @@ const openai = new OpenAI({ apiKey: process.env.MY_OPENAI_API_KEY });
 app.post('/api/chat', chatLimiter, async (req, res) => {
   try {
     const { userMessage } = req.body;
+    
+    // Extract CSRF token from header or body
+    const csrfToken = req.headers['x-csrf-token'] || req.body.csrfToken;
+
+    // CSRF Token Validation
+    if (!csrfToken) {
+      console.log(`[${new Date().toISOString()}] CSRF token missing from IP: ${req.ip}`);
+      return res.status(403).json({ 
+        error: 'CSRF token required. Please refresh the page and try again.',
+        code: 'CSRF_TOKEN_MISSING'
+      });
+    }
+
+    if (!validateCSRFToken(csrfToken)) {
+      console.log(`[${new Date().toISOString()}] Invalid CSRF token from IP: ${req.ip}`);
+      return res.status(403).json({ 
+        error: 'Invalid or expired CSRF token. Please refresh the page and try again.',
+        code: 'CSRF_TOKEN_INVALID'
+      });
+    }
 
     // Validate and sanitize input
     const sanitizedMessage = validateAndSanitizeInput(userMessage);
@@ -317,9 +379,6 @@ app.get('/api/health', (req, res) => {
     version: '1.0.0'
   });
 });
-
-
-
 
 // Export the Serverless Handler
 export const handler = serverless(app);
