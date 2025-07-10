@@ -7,6 +7,8 @@ export default function ChatBox() {
     const [error, setError] = useState('');
     const [rateLimitInfo, setRateLimitInfo] = useState(null);
     const [csrfToken, setCsrfToken] = useState(null);
+    const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+    const [audioEnabled, setAudioEnabled] = useState(true);
 
     // Fetch CSRF token
     const fetchCSRFToken = useCallback(async () => {
@@ -34,6 +36,42 @@ export default function ChatBox() {
     useEffect(() => {
         fetchCSRFToken();
     }, [fetchCSRFToken]);
+
+    // Audio playback function
+    const playAudio = async (audioData) => {
+        if (!audioData || isPlayingAudio) return;
+        
+        try {
+            setIsPlayingAudio(true);
+            
+            // Convert base64 to blob
+            const audioBytes = atob(audioData);
+            const audioArray = new Uint8Array(audioBytes.length);
+            for (let i = 0; i < audioBytes.length; i++) {
+                audioArray[i] = audioBytes.charCodeAt(i);
+            }
+            
+            const audioBlob = new Blob([audioArray], { type: 'audio/mpeg' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            
+            audio.onended = () => {
+                setIsPlayingAudio(false);
+                URL.revokeObjectURL(audioUrl);
+            };
+            
+            audio.onerror = () => {
+                setIsPlayingAudio(false);
+                URL.revokeObjectURL(audioUrl);
+                console.error('Audio playback failed');
+            };
+            
+            await audio.play();
+        } catch (error) {
+            setIsPlayingAudio(false);
+            console.error('Error playing audio:', error);
+        }
+    };
 
     // Input validation and sanitization
     const validateInput = (input) => {
@@ -110,7 +148,7 @@ export default function ChatBox() {
         setIsLoading(true);
 
         try {
-            const response = await fetch('/api/chat', {
+            const response = await fetch(`/api/chat?includeAudio=${audioEnabled}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -182,9 +220,16 @@ export default function ChatBox() {
                 { 
                     sender: 'ai', 
                     message: data.response || data.aiResponse, // Handle both response formats
-                    timestamp: data.timestamp || new Date().toISOString()
+                    timestamp: data.timestamp || new Date().toISOString(),
+                    hasAudio: data.hasAudio,
+                    audioData: data.audioData
                 }
             ]);
+
+            // Play audio if available and enabled
+            if (data.hasAudio && data.audioData && audioEnabled) {
+                playAudio(data.audioData);
+            }
 
         } catch (error) {
             console.error('Error fetching AI response:', error);
@@ -234,6 +279,21 @@ export default function ChatBox() {
                         <span className="security-icon">{csrfToken ? '🔒' : '🔓'}</span>
                         {csrfToken ? 'Secure Connection' : 'Initializing Security...'}
                     </div>
+                    <div className="audio-controls">
+                        <button 
+                            className={`audio-toggle ${audioEnabled ? 'enabled' : 'disabled'}`}
+                            onClick={() => setAudioEnabled(!audioEnabled)}
+                            title={audioEnabled ? 'Disable voice responses' : 'Enable voice responses'}
+                        >
+                            <span className="audio-icon">{audioEnabled ? '🔊' : '🔇'}</span>
+                            Voice: {audioEnabled ? 'ON' : 'OFF'}
+                        </button>
+                        {isPlayingAudio && (
+                            <span className="audio-playing">
+                                🎵 Playing...
+                            </span>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -243,11 +303,23 @@ export default function ChatBox() {
                         <div className="message-content">
                             {chat.message}
                         </div>
-                        {chat.timestamp && (
-                            <div className="message-timestamp">
-                                {new Date(chat.timestamp).toLocaleTimeString()}
-                            </div>
-                        )}
+                        <div className="message-footer">
+                            {chat.timestamp && (
+                                <div className="message-timestamp">
+                                    {new Date(chat.timestamp).toLocaleTimeString()}
+                                </div>
+                            )}
+                            {chat.hasAudio && chat.audioData && (
+                                <button 
+                                    className="audio-replay-btn"
+                                    onClick={() => playAudio(chat.audioData)}
+                                    disabled={isPlayingAudio}
+                                    title="Play audio response"
+                                >
+                                    🔊
+                                </button>
+                            )}
+                        </div>
                     </div>
                 ))}
                 

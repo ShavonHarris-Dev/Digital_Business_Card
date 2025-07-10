@@ -10,6 +10,7 @@ import serverless from 'serverless-http';
 import express from 'express';
 import cors from 'cors';
 import OpenAI from 'openai';
+import { ElevenLabsClient } from 'elevenlabs';
 // import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 // import { PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly';
 // import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -84,6 +85,9 @@ const validateAndSanitizeInput = (input) => {
 
 const app = express();
 
+// Configure Express to trust Netlify proxy with specific settings
+app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal']);
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
@@ -100,57 +104,51 @@ app.use(helmet({
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? ['https://getdowntobusinesscard.netlify.app'] // Replace with your actual domain
-    : ['http://localhost:5173', 'http://localhost:8888'],
+    : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:8888'],
   credentials: true,
   methods: ['POST', 'GET', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
 }));
 
 app.use(express.json({ limit: '10mb' }));
 
-// Rate limiting configuration
-const chatLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute window
-  max: 10, // Limit each IP to 10 requests per windowMs
-  message: {
-    error: 'Too many chat requests from this IP. Please wait a minute before trying again.',
-    retryAfter: 60,
-    limitInfo: {
-      max: 10,
-      windowMs: 60000
-    }
-  },
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  skipSuccessfulRequests: false, // Don't skip successful requests
-  skipFailedRequests: false, // Don't skip failed requests
-  keyGenerator: (req) => {
-    // Use IP address as the key for rate limiting
-    return req.ip || req.connection.remoteAddress || 'unknown';
-  },
-  // Custom handler for when limit is exceeded
-  handler: (req, res) => {
-    console.log(`Rate limit exceeded for IP: ${req.ip} at ${new Date().toISOString()}`);
-    res.status(429).json({
-      error: 'Too many requests. Please wait a minute before trying again.',
-      retryAfter: Math.ceil((req.rateLimit.resetTime - Date.now()) / 1000),
-      limit: req.rateLimit.limit,
-      remaining: req.rateLimit.remaining
-    });
+// Rate limiting configuration - Disabled for development
+const chatLimiter = (req, res, next) => {
+  // Skip rate limiting in development
+  if (process.env.NODE_ENV !== 'production') {
+    return next();
   }
-});
+  
+  // Enable rate limiting in production
+  return rateLimit({
+    windowMs: 60 * 1000,
+    max: 10,
+    message: {
+      error: 'Too many chat requests from this IP. Please wait a minute before trying again.',
+      retryAfter: 60
+    }
+  })(req, res, next);
+};
 
-// Global rate limiter for all endpoints (more permissive)
-const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per 15 minutes
-  message: {
-    error: 'Too many requests from this IP. Please try again later.',
-    retryAfter: 900
-  },
-  standardHeaders: true,
-  legacyHeaders: false
-});
+// Global rate limiter for all endpoints (disabled in development)
+const globalLimiter = (req, res, next) => {
+  // Skip rate limiting in development
+  if (process.env.NODE_ENV !== 'production') {
+    return next();
+  }
+  
+  // Enable rate limiting in production
+  return rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per 15 minutes
+    message: {
+      error: 'Too many requests from this IP. Please try again later.',
+      retryAfter: 900
+    },
+    standardHeaders: true,
+    legacyHeaders: false
+  })(req, res, next);
+};
 
 // Apply global rate limiting to all routes
 app.use(globalLimiter);
@@ -158,7 +156,11 @@ app.use(globalLimiter);
 // Request logging middleware for monitoring
 app.use((req, res, next) => {
   const timestamp = new Date().toISOString();
-  const ip = req.ip || req.connection.remoteAddress || 'unknown';
+  const ip = req.ip || 
+             req.headers['x-forwarded-for']?.split(',')[0] || 
+             req.headers['x-real-ip'] || 
+             req.connection?.remoteAddress || 
+             'unknown';
   console.log(`[${timestamp}] ${req.method} ${req.path} - IP: ${ip}`);
   
   // Log rate limit headers if they exist
@@ -193,7 +195,55 @@ const profileData = JSON.parse(fs.readFileSync(path.resolve('shavon_profile.json
 // });
 
 // OpenAI Configuration
+if (!process.env.MY_OPENAI_API_KEY || process.env.MY_OPENAI_API_KEY === 'your_openai_api_key_here') {
+  console.warn('Warning: OpenAI API key is not configured. Please set MY_OPENAI_API_KEY in your .env file.');
+}
 const openai = new OpenAI({ apiKey: process.env.MY_OPENAI_API_KEY });
+
+// ElevenLabs Configuration
+if (!process.env.ELEVENLABS_API_KEY || process.env.ELEVENLABS_API_KEY === 'your_elevenlabs_api_key_here') {
+  console.warn('Warning: ElevenLabs API key is not configured. Audio generation will be disabled.');
+}
+const elevenlabs = process.env.ELEVENLABS_API_KEY && process.env.ELEVENLABS_API_KEY !== 'your_elevenlabs_api_key_here' 
+  ? new ElevenLabsClient({ apiKey: process.env.ELEVENLABS_API_KEY })
+  : null;
+
+// Helper Function to Generate Speech with ElevenLabs
+const generateSpeech = async (text, voiceId = "21m00Tcm4TlvDq8ikWAM") => {
+  if (!elevenlabs) {
+    throw new Error('ElevenLabs is not configured. Please set ELEVENLABS_API_KEY in your environment.');
+  }
+
+  try {
+    // Generate speech using ElevenLabs textToSpeech.convert method
+    const audio = await elevenlabs.textToSpeech.convert(voiceId, {
+      text: text,
+      model_id: "eleven_monolingual_v1",
+      voice_settings: {
+        stability: 0.5,
+        similarity_boost: 0.75
+      }
+    });
+
+    // Convert audio stream to buffer
+    const chunks = [];
+    for await (const chunk of audio) {
+      chunks.push(chunk);
+    }
+    const audioBuffer = Buffer.concat(chunks);
+
+    // Return the audio buffer as base64
+    const audioBase64 = audioBuffer.toString('base64');
+    
+    return {
+      audioData: audioBase64,
+      contentType: 'audio/mpeg'
+    };
+  } catch (error) {
+    console.error('ElevenLabs speech generation error:', error);
+    throw new Error('Failed to generate speech');
+  }
+};
 
 // const generatePreSignedUrl = async (bucketName, key, expiresIn = 3600) => {
 //   const command = new GetObjectCommand({ Bucket: bucketName, Key: key });
@@ -311,6 +361,14 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
       return res.status(400).json({ error: 'userMessage is required' });
     }
 
+    // Check if OpenAI API key is configured
+    if (!process.env.MY_OPENAI_API_KEY || process.env.MY_OPENAI_API_KEY === 'your_openai_api_key_here') {
+      return res.status(500).json({ 
+        error: 'OpenAI API key is not configured. Please contact the administrator.',
+        code: 'API_KEY_NOT_CONFIGURED'
+      });
+    }
+
     // Construct System Message using Profile Data
     const systemMessage = `You are Shavon's personal assistant, here to highlight their exceptional skills as a React/JavaScript Developer.
         Your role is to truthfully represent Shavon's abilities while actively promoting them to potential recruiters. 
@@ -333,14 +391,33 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
     // Sanitize AI response for safe display
     const sanitizedResponse = validator.escape(aiMessage);
 
+    // Generate speech with ElevenLabs (optional - can be disabled with query parameter)
+    let audioData = null;
+    const includeAudio = req.query.includeAudio !== 'false'; // Default to true
+    
+    if (includeAudio && elevenlabs) {
+      try {
+        const speechResult = await generateSpeech(aiMessage);
+        audioData = speechResult.audioData;
+        console.log(`[${new Date().toISOString()}] Speech generated successfully for IP: ${req.ip}`);
+      } catch (speechError) {
+        console.error('Speech generation failed:', speechError);
+        // Continue without audio if speech generation fails
+      }
+    } else if (includeAudio && !elevenlabs) {
+      console.log('Audio requested but ElevenLabs is not configured');
+    }
+
     // Generate Speech and Upload to S3, then get Pre-Signed URL
     // const presignedUrl = await getSpeech(aiMessage, languageCode);
 
-    // Respond with the AI message and Pre-Signed URL
+    // Respond with the AI message and audio data
     // res.status(200).json({ aiResponse: aiMessage, s3Url: presignedUrl });
     res.status(200).json({ 
       response: sanitizedResponse, // Changed from aiResponse to response to match frontend
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      audioData: audioData, // Base64 encoded audio from ElevenLabs
+      hasAudio: !!audioData
     });
   } catch (error) {
     console.error('Error in /api/chat:', error);

@@ -337,11 +337,91 @@ a:hover {
   word-wrap: break-word;
 }
 
+.message-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
 .message-timestamp {
   font-size: 0.7em;
   opacity: 0.7;
-  margin-top: 6px;
   font-style: italic;
+}
+
+/* Audio Controls */
+.audio-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.audio-toggle {
+  background: none;
+  border: 1px solid var(--accent-color);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85em;
+  transition: all 0.3s ease;
+}
+
+.audio-toggle.enabled {
+  background-color: var(--accent-color);
+  color: var(--text-color);
+}
+
+.audio-toggle.disabled {
+  background-color: transparent;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.audio-toggle:hover {
+  opacity: 0.8;
+  transform: translateY(-1px);
+}
+
+.audio-icon {
+  font-size: 1.1em;
+}
+
+.audio-playing {
+  color: var(--primary-color);
+  font-size: 0.85em;
+  font-weight: 500;
+  animation: pulse 1.5s infinite;
+}
+
+.audio-replay-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1em;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  opacity: 0.7;
+}
+
+.audio-replay-btn:hover {
+  opacity: 1;
+  background-color: rgba(211, 84, 0, 0.1);
+}
+
+.audio-replay-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
 /* Loading Animation */
