@@ -1,204 +1,261 @@
 {
-    "personal_info": {
-      "name": "Shavon Harris",
-      "email": "shavonharrisdev@gmail.com",
-      "website": "https://shavonharris-dev.netlify.app/",
-      "linkedin": "https://linkedin.com/in/shavonharris-dev/",
-      "github": "https://github.com/ShavonHarris-Dev",
-      "location": "Chicago, Illinois, United States (Remote)"
-    },
-    "professional_summary": "Former UI Engineer at Trellix with expertise in developing modern, inclusive design systems using React and TypeScript. Proficient in improving accessibility, state management (Redux), and API integration (REST). Currently expanding expertise in Python and cloud technologies like Azure, with a passion for building APIs and accessible tech.",
-    "skills": {
-      "frontend": [
-        "React.js",
-        "JavaScript",
-        "TypeScript",
-        "HTML",
-        "CSS"
-      ],
-      "backend": [
-        "Node.js",
-        "Express",
-        "REST APIs",
-        "Python",
-        "Azure",
-        "MySQL"
-      ],
-      "devops_and_tools": [
-        "GitHub Actions",
-        "Docker",
-        "Git",
-        "npm & Yarn",
-        "AWS",
-        "CI/CD"
-      ],
-      "testing": [
-        "React Testing Library",
-        "TDD",
-        "JSDoc"
-      ],
-      "other": [
-        "WCAG Accessibility Compliance",
-        "Design Systems",
-        "Scalable Code",
-        "Github Copilot",
-        "Modular Code"
-      ]
-    },
-    "work_experience": [
-      {
-        "company": "Trellix",
-        "role": "Software Engineer - User Interface",
-        "duration": "Jun 2022 - Present (2 yrs 5 mos)",
-        "location": "Chicago/Remote",
-        "team": "Design Systems Team",
-        "responsibilities": [
-          "Enhanced component accessibility by 60% through collaboration with the design team.",
-          "Automated GitHub workflows.",
-          "Migrated 50+ components to Shadow DOM, improving rendering efficiency by 30%.",
-          "Contributed to company-wide brand refresh after restructuring."
-        ]
-      },
-      {
-        "team": "Rules Team",
-        "responsibilities": [
-          "Implemented Redux for scalable state management, improving scalability by 40%.",
-          "Developed UI for rule editing, bulk rule deletion, and state management.",
-          "Integrated APIs for rule deletion, improving backend efficiency.",
-          "Managed UI validation and localization."
-        ]
-      },
-      {
-        "company": "100Devs",
-        "role": "Developer Apprentice",
-        "duration": "Aug 2021 - Jun 2022 (11 mos)",
-        "location": "Remote",
-        "responsibilities": [
-          "Designed and developed CRUD and MERN applications using JavaScript, React, MongoDB, and Node.js.",
-          "Improved web app performance by 15% through Chai/Mocha testing.",
-          "Implemented Git and GitHub for version control in a distributed team.",
-          "Built RESTful APIs for efficient data management and CRUD operations."
-        ]
-      },
-      {
-        "company": "MAPSCorps 501(c)(3)",
-        "role": "Senior Field Coordinator",
-        "duration": "Apr 2021 - Aug 2021 (5 mos)",
-        "location": "Chicago",
-        "responsibilities": [
-          "Created curriculum for remote STEM research, impacting 15,000+ locations.",
-          "Mentored 5 symposium groups on data collection for public health initiatives.",
-          "Taught young people how to use GIS and Tableau for community and public health analysis."
-        ]
-      },
-      {
-        "company": "Independent Families",
-        "role": "Pod School Teacher, Multi-Grade Instructor",
-        "duration": "Jun 2020 - Jun 2021 (1 yr)",
-        "location": "Chicago",
-        "responsibilities": [
-          "Led and managed an alternative school during the pandemic, designing personalized learning plans.",
-          "Fostered leadership and responsibility through service projects.",
-          "Implemented multi-level curriculum for remote learning, showcasing adaptability."
-        ]
-      },
-      {
-        "company": "Latin School of Chicago",
-        "role": "4th Grade Teacher",
-        "duration": "Aug 2017 - Aug 2020 (3 yrs)",
-        "location": "Chicago",
-        "responsibilities": [
-          "Collaborated with educators to develop innovative curricula.",
-          "Used data-driven assessments to personalize student learning plans.",
-          "Developed strong communication and presentation skills through teaching."
-        ]
-      }
+  "personal_info": {
+    "name": "Shavon Harris",
+    "email": "shavonharrisdev@gmail.com",
+    "website": "https://shavonharris-dev.netlify.app/",
+    "linkedin": "https://linkedin.com/in/shavonharris-dev/",
+    "github": "https://github.com/ShavonHarris-Dev",
+    "location": "Chicago, Illinois, United States (Remote)"
+  },
+  "professional_summary": "AI Solutions Consultant and former Software Engineer with expertise in developing modern, inclusive design systems using React and TypeScript. Proficient in AI integration, automation workflows, accessibility improvements, state management (Redux), and API integration (REST). Currently specializing in AI automation workflows and teaching AI implementation for small businesses, with a passion for building accessible tech solutions.",
+  "skills": {
+    "frontend": [
+      "JavaScript (ES6+)",
+      "TypeScript",
+      "React",
+      "Redux",
+      "TanStack Query",
+      "Storybook",
+      "UI Component Libraries",
+      "Design Systems",
+      "Performance Optimization (React Profiler)",
+      "Web Accessibility (WCAG 2.1)",
+      "HTML",
+      "CSS"
     ],
-    
-        "projects": [
-          {
-            "name": "Magical Mirror App",
-            "description": "An app that allows users to send kind messages that appear magically when viewed by a friend.",
-            "technologies": ["React", "Vite", "PostgreSQL", "JWT Authentication"]
-          },
-          {
-            "name": "KDrama Movie Recommender",
-            "description": "A KDrama recommendation app based on user mood, built with React and OpenAI integration.",
-            "technologies": ["React", "OpenAI API", "Vite", "Azure"]
-          },
-          {
-            "name": "Storybook",
-            "description": "This site was made using Handlebars, Materialize, Node.js, and Mongoose. It features Google authorization and uses Passport.js to handle authentication.",
-            "technologies": ["HTML5", "CSS", "JavaScript", "Handlebars", "Node.js", "Mongoose", "Passport.js"],
-            "learning": "Focused on using the MVC architectural paradigm to create a clean and functioning full-stack application with Google authentication."
-          },
-          {
-            "name": "Flashbacks: An App to Record Memories",
-            "description": "This site was made using React, Redux, and Mongoose.",
-            "technologies": ["React", "Redux", "Mongoose"],
-            "learning": "Focused on enhancing my skills with React and Redux for state management."
-          },
-          {
-            "name": "Shavon Harris Dev Website",
-            "description": "This site was made using React, HTML, and CSS. It’s an improvement on my previous portfolio that was made with vanilla JavaScript.",
-            "technologies": ["HTML5", "CSS", "JavaScript", "React"]
-          },
-          {
-            "name": "BollyBot: Random Bollywood Movie Generator",
-            "description": "A simple random movie generator born from my love of Bollywood movies. There are 50 Bollywood movies coming out every moment, and it takes forever to choose the right one to watch. Enter BollyBot!",
-            "technologies": ["React", "CSS", "JavaScript"],
-            "optimizations": "I would redo the UI with React, make this a backend app, and store the data in MongoDB. Currently, the data is hardcoded.",
-            "lessons_learned": "This project would be more efficient with a database integration."
-          },
-          {
-            "name": "Leads Tracker",
-            "description": "An app to track leads while applying to jobs, recruiters, and connections on LinkedIn. Built using CSS, JavaScript, and HTML with Firebase integration. Made into a Progressive Web App (PWA) so that it can be used on mobile devices.",
-            "technologies": ["CSS", "JavaScript", "HTML", "Firebase"],
-            "optimizations": "I would work on improving the mobile interface and adding additional tracking features."
-          },
-          {
-            "name": "Personal Recipe Book",
-            "description": "An app to store recipes I gather during my travels. Built to keep track of recipes over time.",
-            "website": "https://recipesfromaroundtheworld.netlify.app/",
-            "technologies": ["React", "CSS", "JavaScript"],
-            "optimizations": "I would add serving size and chef notes, and refactor ingredients and instructions into reusable components.",
-            "lessons_learned": "Acknowledgment to Brad Traversy for his courses and inspiration."
-          }
-        ],
-    "community_engagement": {
-      "mentorship": [
-        {
-          "role": "Career Mentor",
-          "impact": "Mentored 10+ career changers transitioning into tech.",
-          "responsibilities": [
-            "Guided mentees on time management and conducted code reviews.",
-            "Increased mentees’ LinkedIn networks to 500+ connections.",
-            "Curated and shared free learning resources like Scrimba and FreeCodeCamp."
-          ]
-        },
-        {
-          "role": "Community Engagement Mentor",
-          "impact": "Provided guidance on leveraging online tech communities and industry events for career advancement."
-        }
-      ]
-    },
-    "education": [
-      {
-        "school": "100Devs",
-        "degree": "Full Stack Software Development",
-        "duration": "Aug 2021 - Jun 2021"
-      },
-      {
-        "school": "Northern Michigan University",
-        "degree": "Bachelor's in International Relations",
-        "duration": "Sept 2010 - Jun 2014"
-      }
+    "backend": [
+      "Node.js",
+      "Express",
+      "RESTful APIs",
+      "Python (Pandas, NumPy)",
+      "PostgreSQL",
+      "MySQL",
+      "Serverless Functions (Netlify)",
+      "REST API Design",
+      "Flask"
     ],
-    "ongoing_learning": [
-      "Advancing Python skills through side projects.",
-      "Enhancing API architecture knowledge by engaging in open-source projects.",
-      "Exploring AI integration techniques through coursework and personal projects."
+    "ai_integration": [
+      "OpenAI API",
+      "LLM integration",
+      "AI product features",
+      "Prompt engineering",
+      "AWS Polly",
+      "n8n automation workflows"
+    ],
+    "devops_and_tools": [
+      "Docker",
+      "Git",
+      "GitHub Actions (CI/CD)",
+      "AWS (EC2, S3)",
+      "Netlify (Functions, Hosting)",
+      "npm & Yarn",
+      "Agile Methodologies"
+    ],
+    "testing": [
+      "Jest",
+      "React Testing Library",
+      "TDD",
+      "Continuous Integration",
+      "Automated Linting"
+    ],
+    "other": [
+      "Technical Writing",
+      "Documentation (JSDoc)",
+      "GitHub Copilot",
+      "WCAG Accessibility Compliance",
+      "Scalable Code",
+      "Modular Code"
     ]
-  }
-  
+  },
+  "work_experience": [
+    {
+      "company": "Freelance",
+      "role": "AI Solutions Consultant",
+      "duration": "June 2025 - Present",
+      "location": "Remote",
+      "responsibilities": [
+        "Built custom AI automation workflows from 0 to 1 for small business clients using n8n and OpenAI.",
+        "Teaching 'AI for Small Business' workshops, gathering direct user feedback to iterate on curriculum and tools.",
+        "Developing virtual walking companion app (AvecMoi) with beta users, incorporating feedback into product decisions.",
+        "Owning entire product lifecycle: user research, MVP development, user testing, and iterative improvements."
+      ]
+    },
+    {
+      "company": "Trellix",
+      "role": "Software Engineer - User Interface",
+      "duration": "June 2022 - Apr. 2024",
+      "location": "Chicago/Remote",
+      "team": "Rules Team",
+      "key_impact": "Built Rules app from 0 to 1 for XDR product serving 50,000+ enterprise customers including 80% of Fortune 100 companies, processing 68 billion security queries daily across 100+ million endpoints",
+      "responsibilities": [
+        "Owned full product development cycle for mission-critical security workflows used by every Trellix customer, directly impacting global enterprise cybersecurity operations.",
+        "Designed interactive rule editor UI that decreased user error rates by 20% through real-time validation and feedback mechanisms, improving security analyst productivity across Fortune 100 enterprises.",
+        "Improved design system accessibility by 60% by enforcing WCAG standards, directly impacting user adoption across the enterprise customer base of 50,000+ organizations.",
+        "Led Redux integration and mentored team members on best practices while scaling the Rules application to handle enterprise-grade data volumes.",
+        "Expanded test coverage from 55% to 95% with RTL and Jest, ensuring reliability for security-critical workflows protecting 100+ million endpoints.",
+        "Reduced bug counts by 30% via TypeScript migration; streamlined CI/CD pipelines cutting deploy time by 30% for rapid iteration on customer-facing features."
+      ]
+    },
+    {
+      "company": "100Devs",
+      "role": "Developer Apprentice",
+      "duration": "Aug 2021 - Jun 2022 (11 mos)",
+      "location": "Remote",
+      "responsibilities": [
+        "Designed and developed CRUD and MERN applications using JavaScript, React, MongoDB, and Node.js.",
+        "Improved web app performance by 15% through Chai/Mocha testing.",
+        "Implemented Git and GitHub for version control in a distributed team.",
+        "Built RESTful APIs for efficient data management and CRUD operations."
+      ]
+    },
+    {
+      "company": "MAPSCorps 501(c)(3)",
+      "role": "Senior Field Coordinator",
+      "duration": "Apr 2021 - Aug 2021 (5 mos)",
+      "location": "Chicago",
+      "responsibilities": [
+        "Created curriculum for remote STEM research, impacting 15,000+ locations.",
+        "Mentored 5 symposium groups on data collection for public health initiatives.",
+        "Taught young people how to use GIS and Tableau for community and public health analysis."
+      ]
+    },
+    {
+      "company": "Independent Families",
+      "role": "Pod School Teacher, Multi-Grade Instructor",
+      "duration": "Jun 2020 - Jun 2021 (1 yr)",
+      "location": "Chicago",
+      "responsibilities": [
+        "Led and managed an alternative school during the pandemic, designing personalized learning plans.",
+        "Fostered leadership and responsibility through service projects.",
+        "Implemented multi-level curriculum for remote learning, showcasing adaptability."
+      ]
+    },
+    {
+      "company": "Latin School of Chicago",
+      "role": "4th Grade Teacher",
+      "duration": "Aug 2017 - Aug 2020 (3 yrs)",
+      "location": "Chicago",
+      "responsibilities": [
+        "Collaborated with educators to develop innovative curricula.",
+        "Used data-driven assessments to personalize student learning plans.",
+        "Developed strong communication and presentation skills through teaching."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "AI Powered Digital Business Card",
+      "description": "Built web-based digital business card from 0 to 1 with integrated AI chatbot and voice features.",
+      "technologies": ["React", "OpenAI", "AWS Polly", "Node.js", "Express"],
+      "key_features": [
+        "Contextual Q&A with OpenAI integration",
+        "Natural voice synthesis with AWS Polly",
+        "User feedback integration for UX iteration"
+      ],
+      "impact": "Demonstrates end-to-end product ownership and AI integration expertise for user-facing applications."
+    },
+    {
+      "name": "Breathe App to Lessen Anxiety",
+      "description": "Designed and shipped PWA for guided breathing with AI voice instructions, serving users dealing with anxiety management.",
+      "technologies": ["React", "Vite", "AWS Polly", "OpenAI", "Flask"],
+      "key_features": [
+        "AI-generated affirmations",
+        "User analytics and trend visualization",
+        "Guided breathing exercises",
+        "Offline functionality for accessibility"
+      ],
+      "impact": "Improved retention through user testing sessions and focus on accessibility."
+    },
+    {
+      "name": "AvecMoi - Virtual Walking Companion App",
+      "description": "Virtual walking companion app currently in beta with active user testing and feedback incorporation.",
+      "technologies": ["React", "AI Integration", "User Research"],
+      "status": "In Development",
+      "focus": "User research, MVP development, iterative improvements based on beta user feedback."
+    },
+    {
+      "name": "Magical Mirror App",
+      "description": "An app that allows users to send kind messages that appear magically when viewed by a friend.",
+      "technologies": ["React", "Vite", "PostgreSQL", "JWT Authentication"]
+    },
+    {
+      "name": "KDrama Movie Recommender",
+      "description": "A KDrama recommendation app based on user mood, built with React and OpenAI integration.",
+      "technologies": ["React", "OpenAI API", "Vite", "Azure"]
+    },
+    {
+      "name": "Storybook",
+      "description": "This site was made using Handlebars, Materialize, Node.js, and Mongoose. It features Google authorization and uses Passport.js to handle authentication.",
+      "technologies": ["HTML5", "CSS", "JavaScript", "Handlebars", "Node.js", "Mongoose", "Passport.js"],
+      "learning": "Focused on using the MVC architectural paradigm to create a clean and functioning full-stack application with Google authentication."
+    },
+    {
+      "name": "Flashbacks: An App to Record Memories",
+      "description": "This site was made using React, Redux, and Mongoose.",
+      "technologies": ["React", "Redux", "Mongoose"],
+      "learning": "Focused on enhancing my skills with React and Redux for state management."
+    },
+    {
+      "name": "Shavon Harris Dev Website",
+      "description": "This site was made using React, HTML, and CSS. It's an improvement on my previous portfolio that was made with vanilla JavaScript.",
+      "technologies": ["HTML5", "CSS", "JavaScript", "React"]
+    },
+    {
+      "name": "BollyBot: Random Bollywood Movie Generator",
+      "description": "A simple random movie generator born from my love of Bollywood movies. There are 50 Bollywood movies coming out every moment, and it takes forever to choose the right one to watch. Enter BollyBot!",
+      "technologies": ["React", "CSS", "JavaScript"],
+      "optimizations": "I would redo the UI with React, make this a backend app, and store the data in MongoDB. Currently, the data is hardcoded.",
+      "lessons_learned": "This project would be more efficient with a database integration."
+    },
+    {
+      "name": "Leads Tracker",
+      "description": "An app to track leads while applying to jobs, recruiters, and connections on LinkedIn. Built using CSS, JavaScript, and HTML with Firebase integration. Made into a Progressive Web App (PWA) so that it can be used on mobile devices.",
+      "technologies": ["CSS", "JavaScript", "HTML", "Firebase"],
+      "optimizations": "I would work on improving the mobile interface and adding additional tracking features."
+    },
+    {
+      "name": "Personal Recipe Book",
+      "description": "An app to store recipes I gather during my travels. Built to keep track of recipes over time.",
+      "website": "https://recipesfromaroundtheworld.netlify.app/",
+      "technologies": ["React", "CSS", "JavaScript"],
+      "optimizations": "I would add serving size and chef notes, and refactor ingredients and instructions into reusable components.",
+      "lessons_learned": "Acknowledgment to Brad Traversy for his courses and inspiration."
+    }
+  ],
+  "community_engagement": {
+    "mentorship": [
+      {
+        "role": "Community Engagement Mentor",
+        "duration": "June 2022 - Present",
+        "impact": "Mentored 10+ career changers transitioning into tech.",
+        "responsibilities": [
+          "Provided technical guidance, code reviews, and personalized development roadmaps.",
+          "Led workshops and fostered knowledge sharing, promoting accessible technology for diverse communities.",
+          "Guided mentees on time management and conducted code reviews.",
+          "Increased mentees' LinkedIn networks to 500+ connections.",
+          "Curated and shared free learning resources like Scrimba and FreeCodeCamp."
+        ]
+      }
+    ]
+  },
+  "education": [
+    {
+      "school": "100Devs",
+      "degree": "Full Stack Software Development",
+      "duration": "Aug 2021 - Jun 2022"
+    },
+    {
+      "school": "Northern Michigan University",
+      "degree": "Bachelor's in International Relations",
+      "duration": "Sept 2010 - Jun 2014"
+    }
+  ],
+  "ongoing_learning": [
+    "Advancing Python skills through side projects.",
+    "Enhancing API architecture knowledge by engaging in open-source projects.",
+    "Exploring AI integration techniques through coursework and personal projects.",
+    "Teaching AI implementation workshops for small businesses.",
+    "Developing expertise in automation workflows using n8n and OpenAI."
+  ]
+}
   
