@@ -70,14 +70,15 @@
   "work_experience": [
     {
       "company": "Freelance",
-      "role": "AI Solutions Consultant",
+      "role": "AI Solutions Software Engineer",
       "duration": "June 2025 - Present",
       "location": "Remote",
       "responsibilities": [
         "Built custom AI automation workflows from 0 to 1 for small business clients using n8n and OpenAI.",
         "Teaching 'AI for Small Business' workshops, gathering direct user feedback to iterate on curriculum and tools.",
         "Developing virtual walking companion app (AvecMoi) with beta users, incorporating feedback into product decisions.",
-        "Owning entire product lifecycle: user research, MVP development, user testing, and iterative improvements."
+        "Owning entire product lifecycle: user research, MVP development, user testing, and iterative improvements.",
+        "Creating custom websites for small business clients, focusing on user experience and accessibility."
       ]
     },
     {
