@@ -1,0 +1,6 @@
+# Set correct MIME types for JavaScript modules
+/assets/*.js
+  Content-Type: application/javascript
+
+/*.js
+  Content-Type: application/javascript
