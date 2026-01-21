@@ -11,10 +11,12 @@ function App() {
 
   return (
     <div className="container">
-    <Info />
-    <ChatBox />
-      <About />
-      <Interests />
+      <Info />
+      <ChatBox />
+      <div className="content-grid">
+        <About />
+        <Interests />
+      </div>
       <Footer />
     </div>
   )
