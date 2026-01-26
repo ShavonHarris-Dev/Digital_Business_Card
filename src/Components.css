@@ -769,12 +769,11 @@ button[type="submit"]:hover {
 }
 
 /* Footer Copyright */
-.container--footer::after {
-  content: '© 2024 Shavon Harris. All rights reserved.';
-  display: block;
+.footer-copyright {
   font-size: var(--font-size-xs);
   color: var(--text-muted);
   margin-top: var(--spacing);
+  margin-bottom: 0;
 }
 
 /* Responsive Design */
